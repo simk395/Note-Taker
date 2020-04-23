@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Note Taker</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.1.3/flatly/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
+    crossorigin="anonymous">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">Note Taker</a>
+    <div class="icons">
+      <a href="/"><i class="fas fa-home text-light pr-2"></i></a> 
+    </div>
+  </nav>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <a class="btn btn-outline-success btn-lg mt-4" href="/newnote" role="button"><i class="fas fa-file-signature pr-2 pt-1"></i>New Note</a>
+        
+          <% noteData.forEach(function(element){ %>
+            <div class="card mt-3">
+              <div class="card-header pb-0"><h5><%= element.noteTitle %></h5><p class="text-muted mb-0"><%= element.CreatedAt %><span hidden><%= element.id %></span></p></div>
+              <div class="card-body">
+                <p class="card-text"><%= element.noteText %></p> 
+                <a href="#" class="btn btn-outline-danger ml-2 delete"><i class="fas fa-trash pr-2 pt-1"></i>Delete</a>
+              </div>
+            </div>
+          <% }) %>
+      </div>
+
+
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="/assets/js/index.js"></script>
+
+  <script>
+    $(".save-note").on("click", function(event) {
+    event.preventDefault();
+    var newNote = {
+      noteTitle: $("#noteTitle").val().trim(),
+      noteText: $("#noteText").val().trim()
+    };
+    console.log(newNote);
+    $(".list-container").append(`<div class="card mt-3">
+          <h5 class="card-header">${newNote.noteTitle}</h5>
+          <div class="card-body">
+            <p class="card-text">${newNote.noteText}</p>
+            <a href="#" class="btn btn-outline-danger ml-2 delete"><i class="fas fa-trash pr-2 pt-1"></i>Delete</a>
+          </div>
+        </div>`);
+    $.post("/api/notes", newNote,
+      function(data) {
+        console.log(data);
+        if (data) {
+          console.log("Yay! Your note has been saved.");
+        } else {
+          console.log("Oops, did you forget to type your note?");
+        }
+        // Clear the form when submitting
+        $("#noteTitle").val("");
+        $("#noteText").val("");
+      });
+  });
+  $(".delete").on("click", function(event) {
+      var id = this.parentElement.parentElement.getElementsByTagName("span")[0].textContent;
+      $(this).parent().parent().remove();
+      $.ajax({
+        url: '/api/notes/'+id,
+        type: 'DELETE'
+});
+})
+  $(".cancel-note").on("click", function(event) {
+      $("#noteTitle").val("");
+      $("#noteText").val("");
+  })
+  </script>
+</body>
+
+</html>
