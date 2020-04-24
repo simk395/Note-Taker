@@ -29,6 +29,7 @@
               <div class="card-header pb-0"><h5><%= element.noteTitle %></h5><p class="text-muted mb-0"><%= element.CreatedAt %><span hidden><%= element.id %></span></p></div>
               <div class="card-body">
                 <p class="card-text"><%= element.noteText %></p> 
+                <a href="/editnote" class="btn btn-outline-warning ml-2 edit"><i class="fas fa-file-signature pr-2 pt-1"></i>Edit</a>
                 <a href="#" class="btn btn-outline-danger ml-2 delete"><i class="fas fa-trash pr-2 pt-1"></i>Delete</a>
               </div>
             </div>
@@ -42,33 +43,6 @@
   <script src="/assets/js/index.js"></script>
 
   <script>
-    $(".save-note").on("click", function(event) {
-    event.preventDefault();
-    var newNote = {
-      noteTitle: $("#noteTitle").val().trim(),
-      noteText: $("#noteText").val().trim()
-    };
-    console.log(newNote);
-    $(".list-container").append(`<div class="card mt-3">
-          <h5 class="card-header">${newNote.noteTitle}</h5>
-          <div class="card-body">
-            <p class="card-text">${newNote.noteText}</p>
-            <a href="#" class="btn btn-outline-danger ml-2 delete"><i class="fas fa-trash pr-2 pt-1"></i>Delete</a>
-          </div>
-        </div>`);
-    $.post("/api/notes", newNote,
-      function(data) {
-        console.log(data);
-        if (data) {
-          console.log("Yay! Your note has been saved.");
-        } else {
-          console.log("Oops, did you forget to type your note?");
-        }
-        // Clear the form when submitting
-        $("#noteTitle").val("");
-        $("#noteText").val("");
-      });
-  });
   $(".delete").on("click", function(event) {
       var id = this.parentElement.parentElement.getElementsByTagName("span")[0].textContent;
       $(this).parent().parent().remove();
@@ -77,10 +51,16 @@
         type: 'DELETE'
 });
 })
-  $(".cancel-note").on("click", function(event) {
-      $("#noteTitle").val("");
-      $("#noteText").val("");
-  })
+
+$(".edit").on("click", function(event) {
+       var id = this.parentElement.parentElement.getElementsByTagName("span")[0].textContent;
+       $.ajax({
+          url: '/api/notes/'+id,
+          type: 'GET'
+       });
+}); 
+
+
   </script>
 </body>
 

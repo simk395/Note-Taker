@@ -6,6 +6,10 @@ module.exports = function(app){
     res.sendFile(path.join(__dirname, "../public/newnote.html"));
   })
 
+  app.get("/editnote",function(req, res){
+    res.render('editnote',{editData: editData});
+  })
+
   app.get("/pastnotes",function(req, res){
     res.render('pastnotes',{noteData: noteData});
   });
